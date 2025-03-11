@@ -9,11 +9,11 @@ List<Reports> r = new List<Reports>();
 List<IAlgorthm> algorthms = new List<IAlgorthm>();
 
 MyRSA rsa = new MyRSA();
-
-
+MyPBE pbe = new MyPBE();
 
 
 algorthms.Add(rsa);
+algorthms.Add(pbe);
 //aes
 //ecc
 //etc
