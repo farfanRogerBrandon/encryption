@@ -12,11 +12,13 @@ MyRSA rsa = new MyRSA();
 MyECC ecc = new MyECC();
 MyPBE pbe = new MyPBE();
 MySHA sha = new MySHA();
+MyAES aes = new MyAES();
 
 algorthms.Add(rsa);
 algorthms.Add(ecc);
 algorthms.Add(pbe);
 algorthms.Add(sha);
+algorthms.Add(aes);
 
 //aes
 //ecc
@@ -34,7 +36,7 @@ foreach (var algorithm in algorthms)
     Stopwatch swTotal = new Stopwatch();
 
     // Medición de memoria antes de la ejecución
-    long totalMemoryBefore = GC.GetTotalMemory(true) / (1024 * 1024); // Convertir bytes a MB
+    long totalMemoryBefore = GC.GetTotalMemory(true) ; // Convertir bytes a MB
 
     PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
     Thread.Sleep(500);
@@ -57,14 +59,14 @@ foreach (var algorithm in algorthms)
     float cpuUsageAfter = cpuCounter.NextValue();
 
     // Medición de memoria después de la ejecución
-    long totalMemoryAfter = GC.GetTotalMemory(true) / (1024 * 1024); // Convertir bytes a MB
+    long totalMemoryAfter = GC.GetTotalMemory(true) ; // Convertir bytes a MB
 
     double totalTimeSeconds = totalTime / 1000.0;
 
     r.Add(new Reports()
     {
         algorithmName = algorithm.GetName(),
-        totalMemory = totalMemoryAfter - totalMemoryBefore, // MB
+        totalMemory = (totalMemoryAfter - totalMemoryBefore) /1024, // MB
         totalTime = totalTimeSeconds, 
         beforeProcessor = cpuUsageBefore, // Porcentaje CPU antes
         afterProcessor = cpuUsageAfter // Porcentaje CPU después
@@ -73,11 +75,11 @@ foreach (var algorithm in algorthms)
 
 
 
-foreach (var report in r)
+foreach (var report in r.OrderBy(x=>x.totalTime))
 {
     Console.WriteLine("=========================================");
     Console.WriteLine($"Algoritmo: {report.algorithmName}");
-    Console.WriteLine($"Memoria usada: {report.totalMemory} MB");
+    Console.WriteLine($"Memoria usada: {report.totalMemory} KB");
     Console.WriteLine($"Tiempo total: {report.totalTime:F3} s"); // 3 decimales de precisión
     Console.WriteLine($"CPU antes: {report.beforeProcessor:F2}%");
     Console.WriteLine($"CPU después: {report.afterProcessor:F2}%");
