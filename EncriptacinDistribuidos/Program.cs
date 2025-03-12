@@ -9,11 +9,12 @@ List<Reports> r = new List<Reports>();
 List<IAlgorthm> algorthms = new List<IAlgorthm>();
 
 MyRSA rsa = new MyRSA();
-
+MyECC ecc = new MyECC();
 
 
 
 algorthms.Add(rsa);
+algorthms.Add(ecc);
 //aes
 //ecc
 //etc
