@@ -9,7 +9,7 @@ List<Reports> r = new List<Reports>();
 List<IAlgorthm> algorthms = new List<IAlgorthm>();
 
 MyRSA rsa = new MyRSA();
-
+MySHA sha = new MySHA();
 
 
 
@@ -17,7 +17,7 @@ algorthms.Add(rsa);
 //aes
 //ecc
 //etc
-
+algorthms.Add(sha);
 
 
 string content = ReadFile();
