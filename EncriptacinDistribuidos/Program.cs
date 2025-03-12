@@ -11,15 +11,16 @@ List<IAlgorthm> algorthms = new List<IAlgorthm>();
 MyRSA rsa = new MyRSA();
 MyECC ecc = new MyECC();
 MyPBE pbe = new MyPBE();
+MySHA sha = new MySHA();
 
 algorthms.Add(rsa);
 algorthms.Add(ecc);
 algorthms.Add(pbe);
+algorthms.Add(sha);
 
 //aes
 //ecc
 //etc
-
 
 
 string content = ReadFile();
