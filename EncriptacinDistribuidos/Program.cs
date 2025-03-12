@@ -10,11 +10,12 @@ List<IAlgorthm> algorthms = new List<IAlgorthm>();
 
 MyRSA rsa = new MyRSA();
 MyECC ecc = new MyECC();
-
-
+MyPBE pbe = new MyPBE();
 
 algorthms.Add(rsa);
 algorthms.Add(ecc);
+algorthms.Add(pbe);
+
 //aes
 //ecc
 //etc
