@@ -3,7 +3,9 @@
 using EncriptacinDistribuidos;
 using EncriptacinDistribuidos.Algorithms;
 using EncriptacinDistribuidos.Models;
+using EncriptacionDistribuidos.Algorithms;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 
 List<Reports> r = new List<Reports>();
@@ -14,6 +16,7 @@ MyECC ecc = new MyECC();
 MyPBE pbe = new MyPBE();
 MySHA sha = new MySHA();
 MyAES aes = new MyAES();
+MyAlgorithm myAlgorithm = new MyAlgorithm();
 
 algorthms.Add(rsa);
 algorthms.Add(ecc);
@@ -24,19 +27,89 @@ algorthms.Add(aes);
 //aes
 //ecc
 //etc
-Console.WriteLine("Ingrese 1 para leer archivos, 2 para prueba de algoritmos");
+Console.WriteLine("Ingrese 1 para leer archivos, 2 para prueba de algoritmos, 3 para la modificacion");
 
 int type = int.Parse(Console.ReadLine());
 if(type == 1)
 {
     LetsDoIt();
 }
-else
+else if(type == 2)
 {
     AlgorithmsGo();
 }
+else
+{
+    Modification();
+}
+
+void Modification()
+{
+    Console.WriteLine("Ingresa una palabra");
+
+    string name = Console.ReadLine();
+
+    Console.WriteLine("Ingresa su año de nacimiento");
+
+    int year = int.Parse(Console.ReadLine());
+
+    Console.WriteLine("Ingresa las iteraciones");
+
+    int iterations = int.Parse(Console.ReadLine());
 
 
+    long totalTime = 0;
+    Stopwatch swTotal = new Stopwatch();
+
+    // Medición de memoria antes de la ejecución
+    long totalMemoryBefore = GC.GetTotalMemory(true); // Convertir bytes a MB
+
+    PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+    Thread.Sleep(500);
+
+    float cpuUsageBefore = cpuCounter.NextValue();
+    Thread.Sleep(500);
+    cpuUsageBefore = cpuCounter.NextValue();
+
+    for (int i = 0; i < iterations; i++)
+    {
+        swTotal.Restart();
+
+        myAlgorithm.ToEncrypt(name,year);
+
+        swTotal.Stop();
+
+        totalTime += swTotal.ElapsedMilliseconds;
+    }
+
+    float cpuUsageAfter = cpuCounter.NextValue();
+
+    // Medición de memoria después de la ejecución
+    long totalMemoryAfter = GC.GetTotalMemory(true); // Convertir bytes a MB
+
+    double totalTimeSeconds = totalTime / 1000.0;
+
+    r.Add(new Reports()
+    {
+        algorithmName = myAlgorithm.GetName(),
+        totalMemory = (totalMemoryAfter - totalMemoryBefore) / 1024, // MB
+        totalTime = totalTimeSeconds,
+        beforeProcessor = cpuUsageBefore, // Porcentaje CPU antes
+        afterProcessor = cpuUsageAfter // Porcentaje CPU después
+    });
+
+    foreach (var report in r.OrderBy(x => x.totalTime))
+    {
+        Console.WriteLine("=========================================");
+        Console.WriteLine($"Algoritmo: {report.algorithmName}");
+        Console.WriteLine($"Memoria usada: {report.totalMemory} KB");
+        Console.WriteLine($"Tiempo total: {report.totalTime:F3} s"); // 3 decimales de precisión
+        Console.WriteLine($"CPU antes: {report.beforeProcessor:F2}%");
+        Console.WriteLine($"CPU después: {report.afterProcessor:F2}%");
+        Console.WriteLine("=========================================");
+    }
+
+}
 
 void LetsDoIt()
 {
