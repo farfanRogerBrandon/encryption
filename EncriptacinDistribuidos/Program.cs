@@ -4,6 +4,7 @@ using EncriptacinDistribuidos;
 using EncriptacinDistribuidos.Algorithms;
 using EncriptacinDistribuidos.Models;
 using System.Diagnostics;
+using System.Text;
 
 
 List<Reports> r = new List<Reports>();
@@ -24,7 +25,9 @@ algorthms.Add(aes);
 //aes
 //ecc
 //etc
-Console.WriteLine("Ingrese 1 para leer archivos, 2 para prueba de algoritmos");
+Console.OutputEncoding = Encoding.UTF8;
+
+Console.WriteLine("Ingrese 1 para leer archivos, 2 para prueba de algoritmos 阿");
 
 int type = int.Parse(Console.ReadLine());
 if(type == 1)
@@ -48,94 +51,157 @@ void LetsDoIt()
 
     try
     {
-        using (StreamReader reader = new StreamReader(filePath))
+        string carpeta = "../../../../files/enero"; // Cambia esto por la ruta de tu carpeta
+
+        string[] archivosTxt = Directory.GetFiles(carpeta, "*.txt");
+       
+        foreach (string archivo in archivosTxt)
         {
-            string line;
-            Employee employee = new Employee();
-            while ((line = reader.ReadLine()) != null)
+
+            string name = Path.GetFileName(archivo);
+            Console.WriteLine($"Leyendo archivo: {name}");
+
+            using (StreamReader reader = new StreamReader(carpeta+"/"+name))
             {
-                //Console.WriteLine(line);
-                var cells = line.Split(",");
-
-                if (cells[0].Contains("Reporte") || cells[0] == ""||cells[0].ToLower(). Contains("entrada"))
+                string line;
+                Employee employee = new Employee();
+                while ((line = reader.ReadLine()) != null)
                 {
-                    continue;
-                }
+                    //Console.WriteLine(line);
+                    var cells = line.Split(",");
 
-                if (cells[0].ToLower().Contains("id") )
-                {
-                    employee = new Employee()
+                    if (cells[0].ToLower(). Contains("reporte") || cells[0] == "" || cells[0].ToLower().Contains("entrada"))
                     {
-                        Code = cells[1],
-                        FullName = cells[4],
-                        department = cells[9]
-                    };
-                   
-                   // department.Add();
-                    //employee.Department = department;
-                    employees.Add(employee);
+                        continue;
+                    }
 
-                }
-                else
-                {
-                    Dictionary<int, int> dict = new Dictionary<int, int>()  {
+                    if (cells[0].ToLower().Contains("id"))
+                    {
+                        employee = new Employee()
+                        {
+                            Code = cells[1],
+                            FullName = aes.EncryptAll( cells[4], cells[1]),
+                            Department = aes.EncryptAll(cells[9], cells[1])
+                        };
+
+                        // department.Add();
+                        //employee.Department = department;
+                        employees.Add(employee);
+
+                    }
+                    else
+                    {
+                        Dictionary<int, int> dict = new Dictionary<int, int>()  {
                     { 0, 2 },
                     { 3, 4 },
                     { 5, 6 },
                     { 7, 9 }
                     };
-                    foreach (var item in dict)
-                    {
-                        if (DateTime.TryParse(cells[item.Key], out DateTime dateTime))
+                        foreach (var item in dict)
                         {
-                            Console.WriteLine("Fecha convertida: " + dateTime);
-                            if (cells[item.Value] == "")
+                            if (DateTime.TryParse(cells[item.Key], out DateTime dateTime))
                             {
-                                cells[item.Value] = "Desconocido";
+                                Console.WriteLine("Fecha convertida: " + dateTime);
+                                if (cells[item.Value] == "")
+                                {
+                                    cells[item.Value] = "Desconocido";
+                                }
+
+                                assistances.Add(new Assistance()
+                                {
+                                    Employee = employee,
+                                    Type = cells[item.Value],
+                                    Date = dateTime.Date,
+                                    MarkDate = dateTime
+
+                                });
+                            }
+                            else
+                            {
+                                Console.WriteLine("El formato de fecha no es válido." + cells[item.Key]);
+                                continue;
                             }
 
-                            assistances.Add(new Assistance()
-                            {
-                                Employee = employee,
-                                Type = cells[item.Value],
-                                Date = dateTime.Date,
-                                MarkDate = dateTime
-                                
-                            });
                         }
-                        else
-                        {
-                            Console.WriteLine("El formato de fecha no es válido."+ cells[item.Key]);
-                            continue;
-                        }
-
                     }
+
+
+
+
                 }
-
-
-
-
             }
+
+
         }
-        ShowLists(employees, assistances);
+       
+
+
+
+           ShowLists(employees, assistances);
     }
     catch (Exception ex)
     {
         Console.WriteLine($"Error al leer el archivo: {ex.Message}");
+        throw;
     }
 }
 
 
 void ShowLists(List<Employee> employees, List<Assistance> assistances)
 {
-    foreach (var employee in employees)
-    {
-        Console.WriteLine($"Empleado: {employee.FullName}");
+    //foreach (var employee in employees)
+    //{
+    //    Console.WriteLine($"Empleado: {employee.FullName}");
 
-        foreach (var assistance in assistances.Where(x => x.Employee == employee).ToList())
+    //    foreach (var assistance in assistances.Where(x => x.Employee == employee).ToList())
+    //    {
+    //        Console.WriteLine($"  - Fecha: {assistance.MarkDate}, Tipo: {assistance.Type}");
+    //    }
+    //}
+
+    using (var context = new AppDbContext())
+    {
+        //  context.Database.EnsureCreated(); // Esto crea la BDD si no existe (ideal para pruebas)
+        try
         {
-            Console.WriteLine($"  - Fecha: {assistance.MarkDate}, Tipo: {assistance.Type}");
+            foreach (var employee in employees)
+            {
+
+                employee.RegistrationDate = employee.UpdateDate = DateTime.Now;
+                employee.Status = 1;
+                Employee employeeFInd =  context.Employee.Where(x => x.Code == employee.Code).FirstOrDefault();
+                if(employeeFInd == null)
+                {
+                    context.Employee.Add(employee);
+                    employeeFInd = employee;
+                    context.SaveChanges();
+                    Console.WriteLine("Empleado insertado!");
+
+                }
+                else
+                {
+                    Console.WriteLine("Solo updateo!");
+
+                }
+
+
+                foreach (var assistance in assistances.Where(x => x.Employee == employee).ToList())
+                {
+                    assistance.Employee = employeeFInd;
+                    context.Add(assistance);
+                    context.SaveChanges();
+                    Console.Write("ASistencia insertada");
+                    Console.WriteLine($"  - Fecha: {assistance.MarkDate}, Tipo: {assistance.Type}");
+                }
+            }
+           
         }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+      
     }
 }
 void AlgorithmsGo()

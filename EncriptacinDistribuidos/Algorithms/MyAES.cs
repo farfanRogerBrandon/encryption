@@ -26,7 +26,7 @@ namespace EncriptacinDistribuidos.Algorithms
                 string key = "1234567890123456";  // Clave de 128 bits (16 bytes)
                 string iv = "1234567890123456";   // Vector de inicialización (IV)
 
-                byte[] encryptedData = EncryptStringToBytes_Aes(data, key, iv);
+                byte[] encryptedData = EncryptStringToBytes_Aes(data, key);
                 string decryptedData = DecryptStringFromBytes_Aes(encryptedData, key, iv);
 
                 Console.WriteLine("Texto descifrado: {0}", decryptedData);
@@ -37,13 +37,26 @@ namespace EncriptacinDistribuidos.Algorithms
             }
         }
 
+
+        public byte[] EncryptAll(string data, string code)
+        {
+            code = code.Trim();
+
+            string key = "ahsbdg4560lo#m1!";  // Clave de 128 bits (16 bytes)
+          
+            key = key.Substring(0, key.Length - code.Length );
+            key += code;
+
+            byte[] encryptedData = EncryptStringToBytes_Aes(data, key);
+            return encryptedData;   
+        }
         // Método para cifrar datos usando AES
-        private static byte[] EncryptStringToBytes_Aes(string plainText, string key, string iv)
+        private static byte[] EncryptStringToBytes_Aes(string plainText, string key)
         {
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Encoding.UTF8.GetBytes(key);
-                aesAlg.IV = Encoding.UTF8.GetBytes(iv);
+                aesAlg.GenerateIV();
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
                 using (MemoryStream msEncrypt = new MemoryStream())
