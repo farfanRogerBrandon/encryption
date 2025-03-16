@@ -1,4 +1,5 @@
 import { Employee } from "../App";
+import { translations } from "./translations";
 
 // Definimos las interfaces para los props
 interface SearchProps {
@@ -7,15 +8,20 @@ interface SearchProps {
   selectedEmployee: number | null;
   setSelectedEmployee: React.Dispatch<React.SetStateAction<number | null>>;
   employees: Employee[];
+  language: string; 
 }
 
 const SearchComponent = ({
+  
   userKey,
   setUserKey,
   selectedEmployee,
   setSelectedEmployee,
   employees,
+  language
 }: SearchProps) => {
+
+  const t = translations[language]; // Acceder a las traducciones según el idioma
 
   // Maneja el cambio del input "User Key"
   const handleUserKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,14 +33,17 @@ const SearchComponent = ({
     setSelectedEmployee(Number(event.target.value));
   };
 
+
   return (
+
+    
     <div className="max-w-md mx-auto p-4 border rounded-lg shadow-md bg-white">
-      <h2 className="text-xl font-semibold mb-4">Formulario de Usuario</h2>
+      <h2 className="text-xl font-semibold mb-4">{t.title}</h2>
       <form>
         {/* Input de User Key */}
         <div className="mb-4">
           <label htmlFor="userKey" className="block text-sm font-medium text-gray-700">
-            User Key
+            {t.keyUser}
           </label>
           <input
             id="userKey"
@@ -49,7 +58,7 @@ const SearchComponent = ({
         {/* Select de Empleado */}
         <div className="mb-4">
           <label htmlFor="employee" className="block text-sm font-medium text-gray-700">
-            Seleccione al Empleado
+            {t.selectEmployee}
           </label>
           <select
             id="employee"
