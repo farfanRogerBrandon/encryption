@@ -6,10 +6,12 @@ using EncriptacinDistribuidos.Models;
 using EncriptacionDistribuidos.Algorithms;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Text;
 
 
 List<Reports> r = new List<Reports>();
 List<IAlgorthm> algorthms = new List<IAlgorthm>();
+
 
 MyRSA rsa = new MyRSA();
 MyECC ecc = new MyECC();
@@ -18,15 +20,18 @@ MySHA sha = new MySHA();
 MyAES aes = new MyAES();
 MyAlgorithm myAlgorithm = new MyAlgorithm();
 
+
 algorthms.Add(rsa);
 algorthms.Add(ecc);
 algorthms.Add(pbe);
 algorthms.Add(sha);
 algorthms.Add(aes);
 
-//aes
-//ecc
-//etc
+
+Console.OutputEncoding = Encoding.UTF8;
+Console.InputEncoding = Encoding.UTF8;
+
+
 Console.WriteLine("Ingrese 1 para leer archivos, 2 para prueba de algoritmos, 3 para la modificacion");
 
 int type = int.Parse(Console.ReadLine());
@@ -47,7 +52,11 @@ void Modification()
 {
     Console.WriteLine("Ingresa una palabra");
 
-    string name = Console.ReadLine();
+    string word = Console.ReadLine();
+
+    string palabra = word;
+
+    Console.WriteLine(palabra);
 
     Console.WriteLine("Ingresa su año de nacimiento");
 
@@ -56,7 +65,6 @@ void Modification()
     Console.WriteLine("Ingresa las iteraciones");
 
     int iterations = int.Parse(Console.ReadLine());
-
 
     long totalTime = 0;
     Stopwatch swTotal = new Stopwatch();
@@ -75,7 +83,7 @@ void Modification()
     {
         swTotal.Restart();
 
-        myAlgorithm.ToEncrypt(name,year);
+        myAlgorithm.ToEncrypt(palabra, year);
 
         swTotal.Stop();
 

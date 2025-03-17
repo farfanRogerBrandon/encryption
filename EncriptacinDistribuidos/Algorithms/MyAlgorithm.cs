@@ -4,7 +4,7 @@ using EncriptacinDistribuidos;
 
 namespace EncriptacionDistribuidos.Algorithms
 {
-    internal class MyAlgorithm 
+    internal class MyAlgorithm
     {
         public string GetName()
         {
@@ -15,6 +15,7 @@ namespace EncriptacionDistribuidos.Algorithms
         {
             try
             {
+                Console.WriteLine("dsadasd" + data);
                 string encryptedData = Encrypt(data, birthYear);
                 Console.WriteLine("Encrypted: " + encryptedData);
 
@@ -29,27 +30,29 @@ namespace EncriptacionDistribuidos.Algorithms
 
         private string Encrypt(string data, int birthYear)
         {
+            // Convertir la cadena original a Base64 para preservar caracteres chinos
+            string base64Data = Convert.ToBase64String(Encoding.UTF8.GetBytes(data));
+
             StringBuilder encryptedText = new StringBuilder();
-            foreach (char c in data)
+            foreach (char c in base64Data)
             {
-                encryptedText.Append((c - birthYear) + " ");
+                encryptedText.Append((char)(c - birthYear));
             }
-            return encryptedText.ToString().Trim();
+
+            return encryptedText.ToString();
         }
 
         private string Decrypt(string encryptedData, int birthYear)
         {
             StringBuilder decryptedText = new StringBuilder();
-            string[] numbers = encryptedData.Split(' ');
-
-            foreach (string num in numbers)
+            foreach (char c in encryptedData)
             {
-                if (int.TryParse(num, out int asciiValue))
-                {
-                    decryptedText.Append((char)(asciiValue + birthYear));
-                }
+                decryptedText.Append((char)(c + birthYear));
             }
-            return decryptedText.ToString();
+
+            // Convertir de Base64 a texto original
+            byte[] utf8Bytes = Convert.FromBase64String(decryptedText.ToString());
+            return Encoding.UTF8.GetString(utf8Bytes);
         }
     }
 }
