@@ -4,8 +4,8 @@ namespace encryption_p2Api
 {
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<Employee> Employees { get; set; }
-        public DbSet<Asistance> Asistances { get; set; }
+        public DbSet<Employee> Employee { get; set; }
+        public DbSet<Asistance> Asistance { get; set; }
         public DbSet<Log> Logs { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -21,9 +21,7 @@ namespace encryption_p2Api
                 .Property(e => e.Code)
                 .HasMaxLength(10);
 
-            modelBuilder.Entity<Employee>()
-                .Property(e => e.FullName)
-                .HasMaxLength(50);
+           
 
             modelBuilder.Entity<Employee>()
                 .Property(e => e.UpdateDate)

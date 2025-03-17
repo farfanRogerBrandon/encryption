@@ -14,26 +14,26 @@ namespace encryption_p2Api.Controllers
         [HttpGet("GetAllEmployees")]
         public async Task<IActionResult> GetAllEmployees()
         {
-            var employees = await _context.Employees.ToListAsync();
+            var employees = await _context.Employee.Include(x=>x.asistances) .ToListAsync();
             return Ok(employees);
         }
 
-        [HttpPost("GetAssistancesByEmployeeName")]
-        public async Task<IActionResult> GetAssistancesByEmployeeName([FromBody] string name)
-        {
-            var employee = await _context.Employees
-                .FirstOrDefaultAsync(e => e.FullName.Contains(name));
+        //[HttpPost("GetAssistancesByEmployeeName")]
+        //public async Task<IActionResult> GetAssistancesByEmployeeName([FromBody] string name)
+        //{
+        //    var employee = await _context.Employees
+        //        .FirstOrDefaultAsync(e => e.FullName.Contains(name));
 
-            if (employee == null)
-            {
-                return NotFound("Empleado no encontrado");
-            }
+        //    if (employee == null)
+        //    {
+        //        return NotFound("Empleado no encontrado");
+        //    }
 
-            var assistances = await _context.Asistances
-                .Where(a => a.EmployeeID == employee.ID)
-                .ToListAsync();
+        //    var assistances = await _context.Asistances
+        //        .Where(a => a.EmployeeID == employee.ID)
+        //        .ToListAsync();
 
-            return Ok(assistances);
-        }
+        //    return Ok(assistances);
+        //}
     }
 }

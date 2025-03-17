@@ -12,14 +12,17 @@ namespace encryption_p2Api
         public string Code { get; set; }
         [StringLength(50, ErrorMessage = "Debe ser máximo 50 caracteres")]
         [Column("fullName")]
-        public string FullName { get; set; }
+        public byte[] FullName { get; set; }
         [Column("registrationDate")]
         public DateTime RegistrationDate { get; set; }
         [Column("updateDate")]
-        public string UpdateDate { get; set; }
+        public DateTime UpdateDate { get; set; }
         [Column("status")]
-        public int Status { get; set; }
+        public byte Status { get; set; }
         [Column("department")]
-        public string Department { get; set; }
+        public byte[] Department { get; set; }
+
+
+        public IEnumerable<Asistance> asistances { get; set; }
     }
 }
