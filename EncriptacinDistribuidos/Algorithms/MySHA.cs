@@ -11,7 +11,7 @@ namespace EncriptacinDistribuidos.Algorithms
             return "SHA-256";
         }
 
-        public void ToEncrypt(string data)
+        public void ToEncrypt(string data, int year)
         {
             try
             {

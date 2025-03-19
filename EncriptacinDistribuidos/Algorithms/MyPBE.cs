@@ -17,7 +17,7 @@ namespace EncriptacinDistribuidos.Algorithms
             this.password = "MiContraseñaSegura123";
         }
 
-        public void ToEncrypt(string data)
+        public void ToEncrypt(string data, int year)
         {
             try
             {

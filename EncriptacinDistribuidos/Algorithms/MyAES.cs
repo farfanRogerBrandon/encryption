@@ -18,7 +18,7 @@ namespace EncriptacinDistribuidos.Algorithms
             return "AES";
         }
 
-        public void ToEncrypt(string data)
+        public void ToEncrypt(string data, int year)
         {
             try
             {

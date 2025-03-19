@@ -8,7 +8,7 @@ namespace EncriptacinDistribuidos
 {
     public interface IAlgorthm
     {
-        public void ToEncrypt(string data);
+        public void ToEncrypt(string data, int year);
 
         public string GetName();
     }

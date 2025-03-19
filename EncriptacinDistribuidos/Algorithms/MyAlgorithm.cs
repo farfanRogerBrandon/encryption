@@ -4,7 +4,7 @@ using EncriptacinDistribuidos;
 
 namespace EncriptacionDistribuidos.Algorithms
 {
-    internal class MyAlgorithm
+    internal class MyAlgorithm : IAlgorthm
     {
         public string GetName()
         {
@@ -15,12 +15,13 @@ namespace EncriptacionDistribuidos.Algorithms
         {
             try
             {
-                Console.WriteLine("dsadasd" + data);
+                // Permitir UTF-8 en la entrada y salida
+                Console.OutputEncoding = Encoding.UTF8;
+                Console.InputEncoding = Encoding.UTF8;
+
                 string encryptedData = Encrypt(data, birthYear);
-                Console.WriteLine("Encrypted: " + encryptedData);
 
                 string decryptedData = Decrypt(encryptedData, birthYear);
-                Console.WriteLine("Decrypted: " + decryptedData);
             }
             catch (Exception ex)
             {
@@ -30,13 +31,13 @@ namespace EncriptacionDistribuidos.Algorithms
 
         private string Encrypt(string data, int birthYear)
         {
-            // Convertir la cadena original a Base64 para preservar caracteres chinos
-            string base64Data = Convert.ToBase64String(Encoding.UTF8.GetBytes(data));
-
+            byte[] utf8Bytes = Encoding.UTF8.GetBytes(data);
             StringBuilder encryptedText = new StringBuilder();
-            foreach (char c in base64Data)
+
+            foreach (byte b in utf8Bytes)
             {
-                encryptedText.Append((char)(c - birthYear));
+                // Desplazamiento circular dentro del rango de bytes válidos
+                encryptedText.Append((char)((b + birthYear) % 256));  // Asegura que el byte no se salga del rango
             }
 
             return encryptedText.ToString();
@@ -44,14 +45,14 @@ namespace EncriptacionDistribuidos.Algorithms
 
         private string Decrypt(string encryptedData, int birthYear)
         {
-            StringBuilder decryptedText = new StringBuilder();
-            foreach (char c in encryptedData)
+            byte[] utf8Bytes = new byte[encryptedData.Length];
+
+            for (int i = 0; i < encryptedData.Length; i++)
             {
-                decryptedText.Append((char)(c + birthYear));
+                // Desplazamiento circular para la desencriptación
+                utf8Bytes[i] = (byte)((encryptedData[i] - birthYear + 256) % 256);  // Asegura que el byte no se salga del rango
             }
 
-            // Convertir de Base64 a texto original
-            byte[] utf8Bytes = Convert.FromBase64String(decryptedText.ToString());
             return Encoding.UTF8.GetString(utf8Bytes);
         }
     }

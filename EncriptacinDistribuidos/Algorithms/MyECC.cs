@@ -26,7 +26,7 @@ namespace EncriptacinDistribuidos
             return "ECC (Elliptic Curve Cryptography)";
         }
 
-        public void ToEncrypt(string data)
+        public void ToEncrypt(string data, int year)
         {
             byte[] dataToEncrypt = Encoding.UTF8.GetBytes(data);
             encryptedData = ECCEncrypt(dataToEncrypt, recipientPublicKey);

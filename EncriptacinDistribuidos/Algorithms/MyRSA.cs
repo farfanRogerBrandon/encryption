@@ -14,7 +14,7 @@ namespace EncriptacinDistribuidos.Algorithms
             return "RSA";
         }
 
-        public void ToEncrypt(string data)
+        public void ToEncrypt(string data, int year)
         {
             try
             {
